@@ -271,8 +271,11 @@ static const CGFloat MBDefaultDetailsLabelFontSize = 12.f;
             bezelView.transform = small;
         }
         CGFloat alpha = animatingIn ? 1.f : 0.f;
-        bezelView.alpha = alpha;
-        self.backgroundView.alpha = alpha;
+	dispatch_async(dispatch_get_main_queue(), ^{
+	    bezelView.alpha = alpha;
+            self.backgroundView.alpha = alpha;
+	});
+        
     };
     [UIView animateWithDuration:0.3 delay:0. usingSpringWithDamping:1.f initialSpringVelocity:0.f options:UIViewAnimationOptionBeginFromCurrentState animations:animations completion:completion];
 }
