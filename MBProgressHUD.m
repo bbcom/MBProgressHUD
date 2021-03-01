@@ -217,7 +217,9 @@ static const CGFloat MBDefaultDetailsLabelFontSize = 12.f;
     [self updateBezelMotionEffects];
 
     if (animated) {
-        [self animateIn:YES withType:self.animationType completion:NULL];
+	dispatch_async(dispatch_get_main_queue(), ^{
+            [self animateIn:YES withType:self.animationType completion:NULL];
+	});
     } else {
         self.bezelView.alpha = 1.f;
         self.backgroundView.alpha = 1.f;
@@ -233,9 +235,11 @@ static const CGFloat MBDefaultDetailsLabelFontSize = 12.f;
 
     if (animated && self.showStarted) {
         self.showStarted = nil;
-        [self animateIn:NO withType:self.animationType completion:^(BOOL finished) {
-            [self done];
-        }];
+	dispatch_async(dispatch_get_main_queue(), ^{
+            [self animateIn:NO withType:self.animationType completion:^(BOOL finished) {
+                [self done];
+            }];
+	});
     } else {
         self.showStarted = nil;
         self.bezelView.alpha = 0.f;
@@ -271,11 +275,8 @@ static const CGFloat MBDefaultDetailsLabelFontSize = 12.f;
             bezelView.transform = small;
         }
         CGFloat alpha = animatingIn ? 1.f : 0.f;
-	dispatch_async(dispatch_get_main_queue(), ^{
-	    bezelView.alpha = alpha;
-            self.backgroundView.alpha = alpha;
-	});
-        
+        bezelView.alpha = alpha;
+        self.backgroundView.alpha = alpha;
     };
     [UIView animateWithDuration:0.3 delay:0. usingSpringWithDamping:1.f initialSpringVelocity:0.f options:UIViewAnimationOptionBeginFromCurrentState animations:animations completion:completion];
 }
